@@ -99,8 +99,8 @@ export default function TopBar({
     };
   }, []);
 
-  const goToStreaks = React.useCallback(() => {
-    navigate('/app/achievements#streaks');
+  const goToAchievements = React.useCallback(() => {
+    navigate('/app/achievements');
   }, [navigate]);
 
   return (
@@ -152,7 +152,7 @@ export default function TopBar({
                       streak={streaksByType.agent_active}
                       compact
                       variant="nav"
-                      onClick={goToStreaks}
+                      onClick={goToAchievements}
                     />
                   )}
                   {streaksByType.daily_login.current_count > 0 && (
@@ -160,7 +160,7 @@ export default function TopBar({
                       streak={streaksByType.daily_login}
                       compact
                       variant="nav"
-                      onClick={goToStreaks}
+                      onClick={goToAchievements}
                     />
                   )}
                   {streaksByType.weekly_review.current_count > 0 && (
@@ -168,7 +168,7 @@ export default function TopBar({
                       streak={streaksByType.weekly_review}
                       compact
                       variant="nav"
-                      onClick={goToStreaks}
+                      onClick={goToAchievements}
                     />
                   )}
                 </>
@@ -194,7 +194,7 @@ export default function TopBar({
                   streak={streaksByType.agent_active}
                   compact
                   variant="nav"
-                  onClick={goToStreaks}
+                  onClick={goToAchievements}
                 />
               )}
               {streaksByType.daily_login.current_count > 0 && (
@@ -202,7 +202,7 @@ export default function TopBar({
                   streak={streaksByType.daily_login}
                   compact
                   variant="nav"
-                  onClick={goToStreaks}
+                  onClick={goToAchievements}
                 />
               )}
               {streaksByType.weekly_review.current_count > 0 && (
@@ -210,7 +210,7 @@ export default function TopBar({
                   streak={streaksByType.weekly_review}
                   compact
                   variant="nav"
-                  onClick={goToStreaks}
+                  onClick={goToAchievements}
                 />
               )}
               {streaksByType.agent_active.current_count <= 0 &&

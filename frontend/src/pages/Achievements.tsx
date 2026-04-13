@@ -1,5 +1,5 @@
 import React from 'react';
-import { useLocation, useOutletContext } from 'react-router-dom';
+import { useOutletContext } from 'react-router-dom';
 import { Award, Trophy } from 'lucide-react';
 import type { AppLayoutOutletContext } from '../types/layout-context';
 import { cn } from '../lib/utils';
@@ -38,20 +38,10 @@ function sortAchievements(list: AchievementWithStatus[]) {
 
 export default function Achievements() {
   const { setHeaderTitle } = useOutletContext<AppLayoutOutletContext>();
-  const location = useLocation();
   React.useEffect(() => {
     setHeaderTitle('Achievements');
     return () => setHeaderTitle(null);
   }, [setHeaderTitle]);
-
-  React.useEffect(() => {
-    if (!location.hash) return;
-    const id = location.hash.replace('#', '');
-    if (!id) return;
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, [location.hash]);
 
   const [tab, setTab] = React.useState<CategoryTab>('all');
   const { data: overview, isLoading, isError } = useGamificationOverview(true);
