@@ -1,0 +1,83 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #0ea5e9;
+  --color-primary-container: #38bdf8;
+  --color-secondary: #22d3ee;
+
+  --color-nav-bg: #0a1628;
+  --color-nav-border: rgba(14, 165, 233, 0.18);
+  --color-nav-text: #f0f6ff;
+  --color-nav-text-muted: #b3c9e8;
+
+  --color-surface: #ffffff;
+  --color-surface-container-low: #f8fafc;
+  --color-surface-container: #f1f5f9;
+  --color-surface-container-high: #ffffff;
+  --color-surface-container-highest: #eef2f7;
+  --color-surface-bright: #e2e8f0;
+  --color-on-surface: #0f172a;
+  --color-on-surface-variant: #475569;
+  --color-outline-variant: rgba(15, 23, 42, 0.14);
+
+  --color-chart-grid: rgba(15, 23, 42, 0.12);
+  --color-chart-tick: rgba(15, 23, 42, 0.62);
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-headline: "Manrope", sans-serif;
+}
+
+@layer base {
+  body {
+    @apply bg-surface text-on-surface font-sans antialiased;
+    background-image: radial-gradient(circle at 0% 0%, rgba(14, 165, 233, 0.08) 0%, transparent 50%),
+                      radial-gradient(circle at 100% 100%, rgba(34, 211, 238, 0.04) 0%, transparent 50%);
+    background-attachment: fixed;
+  }
+}
+
+/* Hide native number input spinners (we use custom +/- buttons) */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+@layer components {
+  .glass-panel {
+    @apply bg-white/95 backdrop-blur-md border border-outline-variant shadow-sm;
+  }
+
+  .sunken-input {
+    @apply bg-surface-container-low border border-outline-variant rounded-lg px-4 py-3 text-sm text-on-surface placeholder:text-on-surface-variant/75 transition-all focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary;
+  }
+
+  .sidebar-active {
+    @apply bg-primary/10 border-r-2 border-primary text-primary font-bold;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.04);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(15, 23, 42, 0.15);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(15, 23, 42, 0.28);
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
