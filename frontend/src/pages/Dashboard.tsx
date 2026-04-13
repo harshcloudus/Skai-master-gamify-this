@@ -22,6 +22,8 @@ import { useAuth } from '../lib/auth-context';
 import type { DashboardOverview } from '../types/api';
 import type { AppLayoutOutletContext } from '../types/layout-context';
 import { Skeleton } from '../components/ui/Skeleton';
+import { useGamificationOverview } from '../lib/gamification';
+import ChallengeCard, { ChallengeCardSkeleton } from '../components/ChallengeCard';
 import {
   ActivityFeedSkeleton,
   DashboardChartSkeleton,
@@ -112,6 +114,8 @@ export default function Dashboard() {
   const { setHeaderTitle } = useOutletContext<AppLayoutOutletContext>();
   const navigate = useNavigate();
   const { profile } = useAuth();
+  const { data: gamification, isLoading: gamificationLoading } =
+    useGamificationOverview(true);
   const [now, setNow] = React.useState(() => new Date());
 
   React.useEffect(() => {
@@ -253,6 +257,102 @@ export default function Dashboard() {
                   {overview?.kpis?.labor_hours_saved?.value ?? '\u00A0'}
                 </h3>
               )}
+            </div>
+          </div>
+        </div>
+
+        {/* Gamification strip (always visible via skeletons/fallback) */}
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 lg:gap-8">
+          <div className="glass-panel rounded-2xl p-6 lg:col-span-2">
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-widest text-on-surface-variant">
+                  Active challenges
+                </p>
+                <p className="mt-1 text-sm text-on-surface-variant">
+                  Your goals for the week
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => navigate('/app/achievements')}
+                className="text-xs font-bold uppercase tracking-widest text-primary hover:opacity-80"
+              >
+                View all
+              </button>
+            </div>
+
+            <div className="mt-5 grid grid-cols-1 gap-4 md:grid-cols-3">
+              {gamificationLoading ? (
+                <>
+                  <ChallengeCardSkeleton />
+                  <ChallengeCardSkeleton />
+                  <ChallengeCardSkeleton />
+                </>
+              ) : (
+                (gamification?.active_challenges ?? []).slice(0, 3).map((c) => (
+                  <ChallengeCard key={c.id} challenge={c} />
+                ))
+              )}
+            </div>
+          </div>
+
+          <div className="glass-panel rounded-2xl p-6">
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-widest text-on-surface-variant">
+                  Latest unlocks
+                </p>
+                <p className="mt-1 text-sm text-on-surface-variant">
+                  Recent achievements
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => navigate('/app/achievements')}
+                className="text-xs font-bold uppercase tracking-widest text-primary hover:opacity-80"
+              >
+                Achievements
+              </button>
+            </div>
+
+            <div className="mt-5 flex flex-wrap gap-2">
+              {gamificationLoading ? (
+                <>
+                  <Skeleton className="h-10 w-20 rounded-2xl" />
+                  <Skeleton className="h-10 w-20 rounded-2xl" />
+                  <Skeleton className="h-10 w-20 rounded-2xl" />
+                </>
+              ) : (
+                (gamification?.achievements ?? [])
+                  .filter((a) => a.unlocked)
+                  .sort((a, b) => {
+                    const at = a.unlocked_at ? new Date(a.unlocked_at).getTime() : 0;
+                    const bt = b.unlocked_at ? new Date(b.unlocked_at).getTime() : 0;
+                    return bt - at;
+                  })
+                  .slice(0, 3)
+                  .map((a) => (
+                    <div
+                      key={a.id}
+                      className="inline-flex items-center gap-2 rounded-2xl border border-primary/20 bg-primary/10 px-4 py-2 shadow-[0_0_14px_rgba(14,165,233,0.10)]"
+                      title={a.title}
+                    >
+                      <span className="text-lg leading-none">{a.icon}</span>
+                      <span className="text-xs font-bold uppercase tracking-widest text-primary">
+                        {a.title}
+                      </span>
+                    </div>
+                  ))
+              )}
+
+              {!gamificationLoading &&
+                (gamification?.achievements ?? []).filter((a) => a.unlocked)
+                  .length === 0 && (
+                  <div className="rounded-xl border border-outline-variant bg-surface-container-low px-4 py-3 text-sm text-on-surface-variant">
+                    No achievements yet — your first unlock will show up here.
+                  </div>
+                )}
             </div>
           </div>
         </div>

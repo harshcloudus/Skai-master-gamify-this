@@ -26,6 +26,7 @@ import { useQuery } from '@tanstack/react-query';
 import { api } from '../lib/api';
 import type { CallListItem, CallDetail } from '../types/api';
 import { Skeleton } from '../components/ui/Skeleton';
+import { usePostGamificationEvent } from '../lib/gamification';
 import {
   CallDetailDrawerSkeleton,
   TableSkeletonRows,
@@ -236,6 +237,7 @@ function AudioPlayer({
 export default function Calls() {
   const { profile } = useAuth();
   const [urlParams, setUrlParams] = useSearchParams();
+  const postGamificationEvent = usePostGamificationEvent();
   const timeZone =
     profile?.restaurant?.timezone ||
     window.localStorage.getItem('skai.timeZone') ||
@@ -431,6 +433,24 @@ export default function Calls() {
     select: (res) => res.data,
     enabled: !!selectedCallId,
   });
+
+  // Fire `call_reviewed` once per call per session (when detail opens).
+  useEffect(() => {
+    if (!selectedCallId) return;
+    if (!callDetail) return;
+    const key = `skai.gamification.callReviewed.${selectedCallId}`;
+    try {
+      if (window.sessionStorage.getItem(key) === 'true') return;
+      window.sessionStorage.setItem(key, 'true');
+    } catch {
+      // ignore storage errors; still send once per mount.
+    }
+    postGamificationEvent.mutate({
+      event_type: 'call_reviewed',
+      metadata: { call_id: selectedCallId },
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedCallId, callDetail?.id]);
 
   return (
     <div className="relative min-h-0 min-w-0 w-full flex-1 overflow-x-hidden">

@@ -90,7 +90,7 @@ export default function Layout() {
         className={cn(
           'flex min-h-screen min-h-dvh min-w-0 flex-1 flex-col bg-surface transition-[margin] duration-200 ease-out',
           'ml-0',
-          sidebarCollapsed ? 'md:ml-20' : 'md:ml-64',
+          sidebarCollapsed ? 'md:ml-[5.5rem]' : 'md:ml-64',
         )}
       >
         <TopBar

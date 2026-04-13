@@ -4,6 +4,7 @@ import {
   LayoutDashboard,
   PhoneCall,
   UtensilsCrossed,
+  Trophy,
   BarChart3,
   CircleDollarSign,
   Settings,
@@ -15,11 +16,14 @@ import {
 import { cn } from '../lib/utils';
 import { useAuth } from '../lib/auth-context';
 import { useMediaQuery } from '../lib/use-media-query';
+import { useGamificationOverview } from '../lib/gamification';
+import { Skeleton } from './ui/Skeleton';
 
 const navItems = [
   { icon: LayoutDashboard, label: 'Overview', path: '/app/overview' },
   { icon: PhoneCall, label: 'Calls & Orders', path: '/app/calls' },
   { icon: UtensilsCrossed, label: 'Menu', path: '/app/menu' },
+  { icon: Trophy, label: 'Achievements', path: '/app/achievements' },
   { icon: BarChart3, label: 'Reports', path: '/app/reports' },
   { icon: CircleDollarSign, label: 'Earnings', path: '/app/earnings' },
 ];
@@ -43,6 +47,8 @@ export default function Sidebar({
   const navigate = useNavigate();
   const { profile, signOut } = useAuth();
   const isNarrowViewport = useMediaQuery('(max-width: 767px)');
+  const { data: gamification, isLoading: gamificationLoading } =
+    useGamificationOverview(true);
 
   const displayName = profile?.restaurant?.name || 'Restaurant';
   const displayRole = profile?.full_name || profile?.email || 'User';
@@ -66,7 +72,7 @@ export default function Sidebar({
         'h-dvh fixed left-0 top-0 z-[220] flex shrink-0 flex-col border-r border-nav-border bg-nav-bg/95 px-4 py-8 backdrop-blur-3xl',
         'transition-transform duration-200 ease-out',
         'w-64',
-        collapsed && 'md:w-20',
+        collapsed && 'md:w-[5.5rem]',
         // Small viewports: drawer off-screen unless open (CSS — no flash from JS)
         'max-md:pointer-events-none max-md:-translate-x-full',
         mobileOpen && 'max-md:pointer-events-auto max-md:translate-x-0',
@@ -153,7 +159,7 @@ export default function Sidebar({
                     'flex items-center rounded-xl text-sm font-semibold transition-all',
                     showNavText
                       ? 'gap-3 px-4 py-3'
-                      : 'justify-center px-2 py-3',
+                      : 'justify-center px-3 py-3',
                   ),
                   isActive
                     ? 'bg-primary/10 font-bold text-primary ring-1 ring-inset ring-primary/25'
@@ -193,6 +199,36 @@ export default function Sidebar({
       </div>
 
       <div className="mt-4 pt-4">
+        <div className={cn('mb-5', showNavText ? 'px-2' : 'px-1')}>
+          {gamificationLoading ? (
+            <Skeleton className="h-10 w-full rounded-xl bg-white/10" />
+          ) : (
+            <div
+              className={cn(
+                'rounded-xl border border-nav-border bg-nav-bg/60 px-3 py-3',
+                !showNavText && 'hidden',
+              )}
+            >
+              <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-widest text-nav-text-muted">
+                <span>Level {gamification?.level ?? 1}</span>
+                <span>{(gamification?.xp ?? 0).toLocaleString()} XP</span>
+              </div>
+              <div className="mt-2 h-2 w-full rounded-full bg-white/10">
+                <div
+                  className="h-full rounded-full bg-primary transition-[width] duration-200 ease-out"
+                  style={{
+                    width: `${Math.round(
+                      ((gamification?.xp ?? 0) /
+                        Math.max(1, gamification?.next_level_xp ?? 100)) *
+                        100,
+                    )}%`,
+                  }}
+                />
+              </div>
+            </div>
+          )}
+        </div>
+
         <div
           className={cn(
             'mb-4 flex items-center',

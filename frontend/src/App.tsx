@@ -13,9 +13,11 @@ import Calls from './pages/Calls';
 import Menu from './pages/Menu';
 import Settings from './pages/Settings';
 import Login from './pages/Login';
+import Achievements from './pages/Achievements';
 import { useAuth } from './lib/auth-context';
 import { useRealtimeSync } from './lib/use-realtime';
 import { AppLoadingSkeleton } from './components/skeletons';
+import GamificationProvider from './components/GamificationProvider';
 
 const comingSoonPages: Record<string, { icon: React.ElementType; description: string }> = {
   Reports: {
@@ -89,39 +91,43 @@ function App() {
 
   return (
     <ErrorBoundary>
-      <Router>
-        <Routes>
-          <Route path="/" element={<Navigate to="/login" replace />} />
-          <Route
-            path="/login"
-            element={
-              <RedirectIfAuthed>
-                <Login />
-              </RedirectIfAuthed>
-            }
-          />
+      <GamificationProvider>
+        <Router>
+          <Routes>
+            <Route path="/" element={<Navigate to="/login" replace />} />
+            <Route
+              path="/login"
+              element={
+                <RedirectIfAuthed>
+                  <Login />
+                </RedirectIfAuthed>
+              }
+            />
 
-          <Route
-            path="/app"
-            element={
-              <RequireAuth>
-                <Layout />
-              </RequireAuth>
-            }
-          >
-            <Route index element={<Navigate to="overview" replace />} />
-            <Route path="overview" element={<ErrorBoundary><Dashboard /></ErrorBoundary>} />
-            <Route path="calls" element={<ErrorBoundary><Calls /></ErrorBoundary>} />
-            <Route path="menu" element={<ErrorBoundary><Menu /></ErrorBoundary>} />
-            <Route path="reports" element={<ComingSoon title="Reports" />} />
-            <Route path="earnings" element={<ComingSoon title="Earnings" />} />
-            <Route path="settings" element={<ErrorBoundary><Settings /></ErrorBoundary>} />
-            <Route path="support" element={<ComingSoon title="Support" />} />
-          </Route>
+            <Route
+              path="/app"
+              element={
+                <RequireAuth>
+                  <Layout />
+                </RequireAuth>
+              }
+            >
+              <Route index element={<Navigate to="overview" replace />} />
+              <Route path="overview" element={<ErrorBoundary><Dashboard /></ErrorBoundary>} />
+              <Route path="calls" element={<ErrorBoundary><Calls /></ErrorBoundary>} />
+              <Route path="menu" element={<ErrorBoundary><Menu /></ErrorBoundary>} />
+              <Route path="achievements" element={<ErrorBoundary><Achievements /></ErrorBoundary>} />
+              <Route path="reports" element={<ComingSoon title="Reports" />} />
+              <Route path="earnings" element={<ComingSoon title="Earnings" />} />
+              <Route path="settings" element={<ErrorBoundary><Settings /></ErrorBoundary>} />
+              <Route path="support" element={<ComingSoon title="Support" />} />
+            </Route>
 
-          <Route path="*" element={<Navigate to="/login" replace />} />
-        </Routes>
-      </Router>
+            <Route path="/achievements" element={<Navigate to="/app/achievements" replace />} />
+            <Route path="*" element={<Navigate to="/login" replace />} />
+          </Routes>
+        </Router>
+      </GamificationProvider>
     </ErrorBoundary>
   );
 }
